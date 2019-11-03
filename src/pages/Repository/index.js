@@ -37,20 +37,24 @@ export default class Repository extends Component {
       })
     ])
 
-    const links = issues.headers.link
-    const pages = links
-      .match(/&page=(\d+)/g)
-      .map(p => Number.parseInt(p.split('=')[1], 10))
-
     const allPages = []
-    for (let i = 1; i <= pages[1]; i++) {
-      allPages.push(i)
-    }
-    this.setState({ page: pages[0] - 1, pages: allPages })
+    let pages = []
+    const links = issues.headers.link
 
+    if (links) {
+      pages = links
+        .match(/&page=(\d+)/g)
+        .map(p => Number.parseInt(p.split('=')[1], 10))
+
+      for (let i = 1; i <= pages[1]; i++) {
+        allPages.push(i)
+      }
+    }
     this.setState({
       repository: repository.data,
       issues: issues.data,
+      page: pages[0] - 1,
+      pages: allPages,
       loading: false
     })
   }
@@ -94,13 +98,16 @@ export default class Repository extends Component {
     })
 
     const links = issues.headers.link
-    const pages = links
-      .match(/&page=(\d+)/g)
-      .map(p => Number.parseInt(p.split('=')[1], 10))
-
     const allPages = []
-    for (let i = 1; i <= pages[1]; i++) {
-      allPages.push(i)
+
+    if (links) {
+      const pages = links
+        .match(/&page=(\d+)/g)
+        .map(p => Number.parseInt(p.split('=')[1], 10))
+
+      for (let i = 1; i <= pages[1]; i++) {
+        allPages.push(i)
+      }
     }
 
     this.setState({
